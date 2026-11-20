@@ -14,7 +14,7 @@ const Config = z.object({
   promoteOnTimeout: z.boolean().default(true),
 });
 
-const DESCRIPTION = "Run a PowerShell command (`pwsh -Command`), return stdout/stderr. Fresh process each call; use `workdir`, not `cd`. Native Windows paths and `$env:NAME`. Put `description` before `command`. Non-zero exits show `[exit code: N]`; Windows kill may show `[exit code: 1]` — treat as interruption. `run_in_background: true` starts a job: read with `job_output`, stop with `job_kill`. `sandbox_permissions` + `justification` request wider access when approved.";
+const DESCRIPTION = "pwsh -Command→stdout/err;new proc;workdir≠cd;Win paths,$env:NAME;description first;exit≠0:[exit code:N];Win kill:[exit code:1]=abort;bg→job(job_output/job_kill);sandbox_permissions+justification→wider";
 
 function validateArgs(args) {
   if (args.command.trim().length === 0) throw new ToolArgsError(["invalid command: expected a non-empty string"]);
@@ -212,7 +212,7 @@ function apply(ctx, config = {}) {
       approver: ctx.get("approval"),
       agent: exec.agent,
       callId: exec.callId,
-      toolName: "pwsh-lite",
+      toolName: "ps",
       signal: exec.signal,
     });
   };
@@ -308,7 +308,7 @@ function apply(ctx, config = {}) {
     };
 
     return defineTool({
-      name: "pwsh-lite",
+      name: "ps",
       description: DESCRIPTION,
       parameters: {
         description: {
